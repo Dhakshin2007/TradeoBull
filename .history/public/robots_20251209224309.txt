@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Optional blocked areas (safe even if they don't exist yet)
+Disallow: /api/
+Disallow: /admin/
+Disallow: /internal/
+
+Sitemap: https://tradeobull.vercel.app/sitemap.xml
