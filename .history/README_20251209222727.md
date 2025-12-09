@@ -1,0 +1,91 @@
+content = """# 🐂 TradeoBull  
+**Learn Trading Before You Risk Real Money**
+
+TradeoBull is an educational stock market simulation platform designed for beginners, students, and finance enthusiasts. It helps users understand how stock trading works using **virtual money** and **real (delayed) stock market data**, without the fear of losing actual savings.
+
+---
+
+## 🚀 Why TradeoBull?
+
+Most new investors lose money not because markets are unfair, but because they lack experience. TradeoBull solves this by offering a **safe trading sandbox** where users:
+
+- Practice buying & selling stocks
+- Track profits, losses, and portfolio growth
+- Learn market behavior using real stock prices
+- Gain exposure to finance concepts the practical way
+
+No real money. No brokers. No risk. Just pure learning.
+
+---
+
+## 🧠 Key Features
+
+### 📊 Realistic Trading Experience
+- Buy & sell stocks using virtual currency
+- Real stock data (15–20 min delayed)
+- Track holdings, P&L, and order history
+
+### 📈 Market Dashboard
+- Explore stocks from Indian & Global markets
+- Watchlist, charts, and price trends
+- Search companies and view essential info
+
+### 🎯 Learning + Gamification
+- Beginner-friendly modules
+- Achievement badges
+- Weekly leaderboards
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer | Technology |
+|------|------------|
+| Frontend | TypeScript, React/Next.js |
+| Backend | Supabase (Auth, DB, RLS) |
+| Data | Stock Market APIs (India + Global) |
+| Charts | ApexCharts / Recharts |
+
+---
+
+## 📦 Default Stock Data
+
+TradeoBull ships with a curated list of **30 popular companies** across India and the US.  
+You’ll find the file here:
+
+---
+
+## ⚖️ Disclaimer
+
+TradeoBull is an educational platform.  
+It **does not** provide investment advice or real trading functionality.  
+Stock prices are delayed and intended solely for learning purposes.
+
+---
+
+## 🛣️ Future Roadmap
+
+- Mutual fund simulator
+- Mobile App (Android + iOS)
+- AI-based trading mentor
+- Options and Futures simulation
+- Social portfolios
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome!  
+For major changes, please open an issue first to discuss what you’d like to add.
+
+---
+
+## ⭐ Support the Project
+
+If TradeoBull helps you learn or inspires you,  
+consider giving it a **⭐ star on GitHub**. It motivates future development!
+
+---
+
+Made with curiosity, caffeine, and zero real money 🐂
+"""
