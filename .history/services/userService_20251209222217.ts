@@ -21,47 +21,27 @@ const getCurrentUserId = () => {
     return localStorage.getItem('tradeobull_user_email');
 };
 
-// --- STRICT REAL AUTH FUNCTIONS ---
+// --- STRICT AUTH FUNCTIONS ---
 
-export const loginUser = async (email: string, password?: string): Promise<UserProfile> => {
+export const loginUser = async (email: string): Promise<UserProfile> => {
     if (!supabase) throw new Error("Database not connected");
-    if (!password) throw new Error("Password is required for secure login");
 
-    // 1. Supabase Auth Login (Verifies Email & Password)
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if (authError) {
-        throw new Error(authError.message);
-    }
-
-    if (!authData.user) {
-        throw new Error("Login failed. Please try again.");
-    }
-
-    // 2. Load profile data from 'profiles' table
-    // We use the Email as the ID for consistency with previous data structure
+    // Check if user exists in Supabase
     const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', email)
         .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is 'not found'
-        console.error("Profile Load Error:", error);
+    if (error || !data) {
+        throw new Error("Account not found. Please Sign Up first.");
     }
 
-    // Prepare profile object
+    // Load profile data
     let profile: UserProfile = { ...DEFAULT_USER, id: email, email: email };
     
-    if (data && data.data) {
+    if (data.data) {
         profile = { ...profile, ...data.data };
-    } else {
-        // Edge case: User in Auth but not in Profiles (shouldn't happen with new register flow)
-        // Auto-create simplified profile
-        await saveUserProfile(profile); 
     }
 
     // Update Local Storage
@@ -71,35 +51,21 @@ export const loginUser = async (email: string, password?: string): Promise<UserP
     return profile;
 };
 
-export const registerUser = async (email: string, name: string, password?: string): Promise<UserProfile> => {
+export const registerUser = async (email: string, name: string): Promise<UserProfile> => {
     if (!supabase) throw new Error("Database not connected");
-    if (!password) throw new Error("Password is required for registration");
 
-    // 1. Check if profile already exists (Prevent duplicate IDs in profiles table)
-    const { data: existingProfile } = await supabase
+    // Check if user already exists
+    const { data: existing } = await supabase
         .from('profiles')
         .select('id')
         .eq('id', email)
         .single();
 
-    if (existingProfile) {
+    if (existing) {
         throw new Error("Account already exists. Please Sign In.");
     }
 
-    // 2. Supabase Auth Sign Up (Creates User in Auth System)
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-            data: { full_name: name }
-        }
-    });
-
-    if (authError) {
-        throw new Error(authError.message);
-    }
-
-    // 3. Create New Profile in 'profiles' table
+    // Create New Profile
     const newProfile: UserProfile = { 
         ...DEFAULT_USER, 
         id: email, 
@@ -107,8 +73,8 @@ export const registerUser = async (email: string, name: string, password?: strin
         name: name || 'Trader' 
     };
 
-    // Insert into Supabase 'profiles' table
-    const { error: profileError } = await supabase
+    // Insert into Supabase
+    const { error } = await supabase
         .from('profiles')
         .insert([{ 
             id: email, 
@@ -116,10 +82,9 @@ export const registerUser = async (email: string, name: string, password?: strin
             updated_at: new Date().toISOString()
         }]);
 
-    if (profileError) {
-        console.error("Profile Creation Error:", profileError);
-        // Note: We don't rollback Auth here for simplicity, user can just login next time and profile will be auto-created by login fallback if needed
-        throw new Error("Failed to initialize profile data. Please contact support.");
+    if (error) {
+        console.error("Registration Error:", error);
+        throw new Error("Failed to create account. Please try again.");
     }
 
     // Success - Update Local
@@ -185,7 +150,7 @@ export const saveUserProfile = async (profile: UserProfile) => {
 
   // 2. Sync to Cloud
   if (supabase) {
-    // console.log("Saving Transaction History for:", profile.email);
+    console.log("Saving Transaction History for:", profile.email);
     
     try {
         const { error } = await supabase
@@ -199,7 +164,7 @@ export const saveUserProfile = async (profile: UserProfile) => {
         if (error) {
             console.error("Supabase Save Error:", error.message);
         } else {
-            // console.log("Supabase Data Synced Successfully");
+            console.log("Supabase Data Synced Successfully");
         }
     } catch (err) {
         console.error("Supabase Exception:", err);
@@ -263,10 +228,7 @@ export const executeTrade = async (
 };
 
 export const resetAccount = async () => {
-    if (supabase) {
-        await supabase.auth.signOut();
-    }
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem('tradeobull_user_email');
-    window.location.reload();
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('tradeobull_user_email');
+  window.location.reload();
 };

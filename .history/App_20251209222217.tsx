@@ -82,22 +82,8 @@ const App: React.FC = () => {
     const [isCloudEnabled, setIsCloudEnabled] = useState(false);
     const [marketStatus, setMarketStatus] = useState<'LIVE' | 'DELAYED' | 'CLOSED'>('CLOSED');
     
-    // UI State - Initialize from LocalStorage for persistence
-    const [darkMode, setDarkMode] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const savedTheme = localStorage.getItem('tradeobull_theme');
-            return savedTheme === 'dark';
-        }
-        return false;
-    });
-
-    const [cookiesAccepted, setCookiesAccepted] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('tradeobull_cookies_accepted') === 'true';
-        }
-        return false;
-    });
-
+    // UI State
+    const [darkMode, setDarkMode] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showOnboarding, setShowOnboarding] = useState(false);
@@ -122,9 +108,8 @@ const App: React.FC = () => {
         setIsCloudEnabled(!!supabase);
     }, []);
 
-    // Persistent Dark Mode Logic
+    // Dark Mode Toggle Logic
     useEffect(() => {
-        localStorage.setItem('tradeobull_theme', darkMode ? 'dark' : 'light');
         if (darkMode) {
             document.documentElement.classList.add('dark');
         } else {
@@ -199,11 +184,6 @@ const App: React.FC = () => {
         setUser(updated);
         await saveUserProfile(updated);
         setShowOnboarding(false);
-    };
-
-    const handleAcceptCookies = () => {
-        localStorage.setItem('tradeobull_cookies_accepted', 'true');
-        setCookiesAccepted(true);
     };
 
     const handleTrade = async (symbol: string, price: number, quantity: number, type: 'BUY' | 'SELL') => {
@@ -417,7 +397,7 @@ const App: React.FC = () => {
             />
 
             {/* Legal & Onboarding Modals */}
-            {!cookiesAccepted && <CookieBanner onAccept={handleAcceptCookies} darkMode={darkMode} />}
+            <CookieBanner onAccept={() => {}} darkMode={darkMode} />
             <TermsModal isOpen={showTerms} onAccept={handleAcceptTerms} darkMode={darkMode} />
             {showOnboarding && <OnboardingTour onComplete={handleCompleteOnboarding} />}
             <PrivacyModal isOpen={showPrivacy} onClose={() => setShowPrivacy(false)} darkMode={darkMode} />

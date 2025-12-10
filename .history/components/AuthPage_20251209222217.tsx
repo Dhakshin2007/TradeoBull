@@ -19,19 +19,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, darkMode }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-        setError("Please fill in all fields");
-        return;
-    }
+    if (!email) return;
     setError('');
     setLoading(true);
     
     try {
         if (isSignUp) {
-            await registerUser(email, name, password);
+            await registerUser(email, name);
             onLogin(email);
         } else {
-            await loginUser(email, password);
+            await loginUser(email);
             onLogin(email);
         }
     } catch (err: any) {
@@ -54,7 +51,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, darkMode }) => {
             </div>
             
             <div className="space-y-4">
-                {['Real-time NSE Data', '₹1,00,000 Virtual Capital', 'Safe Cloud Sync', 'Zero Risk Trading'].map((feat, i) => (
+                {['Real-time NSE Data', '₹10,00,000 Virtual Capital', 'Safe Cloud Sync', 'Zero Risk Trading'].map((feat, i) => (
                     <div key={i} className="flex items-center gap-3 text-emerald-50 font-medium">
                         <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center"><Check size={14} strokeWidth={3} /></div>
                         {feat}
@@ -114,7 +111,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, darkMode }) => {
                     </div>
                 </div>
                 
-                {/* Real Password Field */}
+                {/* Fake Password Field for visuals - Secure in Real App */}
                 <div>
                     <label className={`block text-xs font-bold uppercase mb-2 ${darkMode ? 'text-slate-400' : 'text-gray-500'}`}>Password</label>
                     <div className="relative">
@@ -122,7 +119,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, darkMode }) => {
                         <input 
                             type={showPassword ? "text" : "password"} 
                             required
-                            minLength={6}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={`w-full pl-11 pr-12 py-3.5 rounded-xl border focus:ring-2 focus:ring-[#00d09c] outline-none transition-all font-medium ${darkMode ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
