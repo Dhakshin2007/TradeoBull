@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, 
   Briefcase, 
@@ -105,9 +105,6 @@ const App: React.FC = () => {
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-    // Scroll Ref for Page Transitions
-    const mainContentRef = useRef<HTMLDivElement>(null);
-
     // Toast State
     const [toast, setToast] = useState<{message: string, type: ToastType, isVisible: boolean}>({
         message: '', type: 'info', isVisible: false
@@ -145,13 +142,6 @@ const App: React.FC = () => {
             document.documentElement.classList.remove('dark');
         }
     }, [darkMode]);
-
-    // Scroll to top on View Change
-    useEffect(() => {
-        if (mainContentRef.current) {
-            mainContentRef.current.scrollTo({ top: 0, behavior: 'auto' });
-        }
-    }, [currentView]);
 
     // Check Legal & Onboarding Flow
     const checkUserFlow = (profile: UserProfile) => {
@@ -302,7 +292,7 @@ const App: React.FC = () => {
                          <div 
                             className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm cursor-pointer shadow-md"
                             onClick={() => setCurrentView('PROFILE')}
-                        >
+                         >
                             {user.avatar ? <img src={user.avatar} className="w-full h-full rounded-full" /> : user.email?.[0].toUpperCase()}
                          </div>
                      </div>
@@ -391,7 +381,7 @@ const App: React.FC = () => {
                 </header>
 
                 {/* Scrollable Content */}
-                <div ref={mainContentRef} className="flex-1 overflow-y-auto scroll-smooth flex flex-col">
+                <div className="flex-1 overflow-y-auto scroll-smooth flex flex-col">
                      <div className="p-4 md:p-10 flex-1">
                         <div className="max-w-7xl mx-auto w-full">
                             {searchQuery ? (
@@ -409,14 +399,13 @@ const App: React.FC = () => {
                                     )}
                                 </div>
                             ) : (
-                                // PAGE TRANSITIONS WRAPPER
-                                <div key={currentView} className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
+                                <>
                                     {currentView === 'EXPLORE' && <ExploreView stocks={stocks} onSelect={setSelectedStock} indices={indices} watchlist={user.watchlist || []} />}
                                     {currentView === 'INVESTMENTS' && <InvestmentsView user={user} stocks={stocks} onSelect={setSelectedStock} />}
                                     {currentView === 'ORDERS' && <OrdersView user={user} />}
                                     {currentView === 'LEARN' && <LearnView />}
                                     {currentView === 'PROFILE' && <ProfileView user={user} onViewChange={setCurrentView} resetAccount={handleLogout} />}
-                                </div>
+                                </>
                             )}
                         </div>
                      </div>

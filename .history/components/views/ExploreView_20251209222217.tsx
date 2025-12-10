@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Stock } from '../../types';
-import { TrendingUp, ChevronDown, ChevronUp, Star } from 'lucide-react';
+import { TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
 import IndicesCard from '../IndicesCard';
 import StockListItem from '../StockListItem';
 import { formatCurrency } from '../../utils';
@@ -10,13 +10,10 @@ interface ExploreViewProps {
     stocks: Stock[];
     onSelect: (s: Stock) => void;
     indices: any;
-    watchlist: string[];
 }
 
-const ExploreView: React.FC<ExploreViewProps> = ({ stocks, onSelect, indices, watchlist }) => {
+const ExploreView: React.FC<ExploreViewProps> = ({ stocks, onSelect, indices }) => {
     const [showAll, setShowAll] = useState(false);
-
-    const watchlistedStocks = stocks.filter(s => watchlist.includes(s.symbol));
 
     return (
         <div className="space-y-10 animate-in fade-in duration-500">
@@ -31,20 +28,6 @@ const ExploreView: React.FC<ExploreViewProps> = ({ stocks, onSelect, indices, wa
                     <IndicesCard name="SENSEX" value={indices.sensex.value} change={indices.sensex.change} isPositive={indices.sensex.change >= 0} />
                 </div>
             </section>
-
-            {/* Watchlist Section (Only if items exist) */}
-            {watchlistedStocks.length > 0 && (
-                <section>
-                    <h3 className="font-bold text-[#00d09c] text-xl mb-6 flex items-center gap-2">
-                        <Star size={20} className="fill-[#00d09c]" /> Your Watchlist
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                         {watchlistedStocks.map(stock => (
-                            <StockListItem key={stock.symbol} stock={stock} onClick={() => onSelect(stock)} layout="grid" />
-                        ))}
-                    </div>
-                </section>
-            )}
 
             {/* Top Stocks Grid */}
             <section>
