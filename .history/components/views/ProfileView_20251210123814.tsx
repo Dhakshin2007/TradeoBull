@@ -17,7 +17,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onViewChange, resetAcco
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         name: user.name || 'Trader',
-        location: user.location || 'Hyderabad, India',
+        location: user.location || ', India',
         avatar: user.avatar || '',
         bio: user.bio || 'Investing enthusiast.'
     });

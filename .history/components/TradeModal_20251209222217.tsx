@@ -9,38 +9,32 @@ interface TradeModalProps {
   stock: Stock | null;
   userProfile: UserProfile;
   onTrade: (symbol: string, price: number, quantity: number, type: 'BUY' | 'SELL') => void;
-  initialType?: 'BUY' | 'SELL';
 }
 
-const TradeModal: React.FC<TradeModalProps> = ({ isOpen, onClose, stock, userProfile, onTrade, initialType = 'BUY' }) => {
-  const [type, setType] = useState<'BUY' | 'SELL'>(initialType);
-  const [quantity, setQuantity] = useState<number | ''>(''); // Start blank
+const TradeModal: React.FC<TradeModalProps> = ({ isOpen, onClose, stock, userProfile, onTrade }) => {
+  const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
+  const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setQuantity(''); // Reset to blank on open
-      setType(initialType); // Set to the button clicked (Buy or Sell)
+      setQuantity(1);
+      setType('BUY');
     }
-  }, [isOpen, initialType]);
+  }, [isOpen]);
 
   if (!isOpen || !stock) return null;
 
-  // robust check for valid number
-  const numericQty = quantity === '' ? 0 : quantity;
-  const totalCost = stock.price * numericQty;
-  
-  const canBuy = numericQty >= 1 && userProfile.balance >= totalCost;
+  const totalCost = stock.price * quantity;
+  const canBuy = userProfile.balance >= totalCost;
   const ownedQty = userProfile.portfolio.find(p => p.symbol === stock.symbol)?.quantity || 0;
-  const canSell = numericQty >= 1 && ownedQty >= numericQty;
+  const canSell = ownedQty >= quantity;
 
   const handleTrade = () => {
-    if (numericQty < 1) return;
-    
     setLoading(true);
     // Simulate network delay
     setTimeout(() => {
-        onTrade(stock.symbol, stock.price, numericQty, type);
+        onTrade(stock.symbol, stock.price, quantity, type);
         setLoading(false);
         onClose();
     }, 800);
@@ -101,17 +95,9 @@ const TradeModal: React.FC<TradeModalProps> = ({ isOpen, onClose, stock, userPro
                     <input 
                         type="number" 
                         min="1"
-                        placeholder="0"
                         value={quantity}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            if (val === '') {
-                                setQuantity('');
-                            } else {
-                                setQuantity(Math.max(1, parseInt(val) || 0));
-                            }
-                        }}
-                        className="w-full bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-lg py-3 px-4 text-lg font-semibold text-gray-900 dark:text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all placeholder:text-gray-300 dark:placeholder:text-gray-700"
+                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
+                        className="w-full bg-gray-50 dark:bg-slate-950 border border-gray-200 dark:border-slate-800 rounded-lg py-3 px-4 text-lg font-semibold text-gray-900 dark:text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
                     />
                  </div>
             </div>
@@ -150,12 +136,12 @@ const TradeModal: React.FC<TradeModalProps> = ({ isOpen, onClose, stock, userPro
 
              <button
                 onClick={handleTrade}
-                disabled={loading || (type === 'BUY' && !canBuy) || (type === 'SELL' && !canSell) || numericQty < 1}
+                disabled={loading || (type === 'BUY' && !canBuy) || (type === 'SELL' && !canSell)}
                 className={`w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${
                     type === 'BUY' ? 'bg-[#00d09c] hover:bg-[#00b386] shadow-green-200 dark:shadow-[0_0_15px_rgba(0,208,156,0.3)]' : 'bg-[#eb5b3c] hover:bg-[#d44528]'
                 }`}
             >
-                {loading ? 'Processing...' : `${type.toUpperCase()} ${numericQty > 0 ? numericQty + ' QTY' : ''}`}
+                {loading ? 'Processing...' : `${type.toUpperCase()}`}
             </button>
         </div>
       </div>

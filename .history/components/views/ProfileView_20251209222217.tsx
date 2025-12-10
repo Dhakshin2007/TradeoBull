@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { UserProfile, View } from '../../types';
 import { Settings, ShieldCheck, RefreshCw, ChevronRight, Save, Camera, MapPin, ChevronLeft, Bell, Lock, UserX, Download } from 'lucide-react';
@@ -17,7 +18,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onViewChange, resetAcco
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         name: user.name || 'Trader',
-        location: user.location || 'Hyderabad, India',
+        location: user.location || 'Mumbai, India',
         avatar: user.avatar || '',
         bio: user.bio || 'Investing enthusiast.'
     });
@@ -31,29 +32,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({ user, onViewChange, resetAcco
     };
 
     const handleDownloadData = () => {
-        try {
-            const dataStr = JSON.stringify(user, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            // Sanitize filename
-            const filename = `TradeoBull_Data_${(user.name || 'User').replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.json`;
-            link.download = filename;
-            
-            document.body.appendChild(link);
-            link.click();
-            
-            // Clean up
-            setTimeout(() => {
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            }, 100);
-        } catch (error) {
-            console.error("Download failed:", error);
-            alert("Failed to download data.");
-        }
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(user, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `tradeobull_data_${user.email || 'user'}_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     };
 
     // --- Sub Views ---

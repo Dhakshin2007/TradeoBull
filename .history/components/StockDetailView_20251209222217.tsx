@@ -9,7 +9,7 @@ import { formatCurrency, generateChartData } from '../utils';
 interface StockDetailViewProps {
     stock: Stock;
     onBack: () => void;
-    onTrade: (type: 'BUY' | 'SELL') => void;
+    onTrade: () => void;
 }
 
 const StockDetailView: React.FC<StockDetailViewProps> = ({ stock, onBack, onTrade }) => {
@@ -122,13 +122,13 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ stock, onBack, onTrad
                          <h3 className="font-bold text-gray-900 dark:text-white mb-8 text-xl">Place Order</h3>
                          <div className="space-y-4">
                              <button 
-                                onClick={() => onTrade('BUY')}
+                                onClick={onTrade}
                                 className="w-full bg-[#00d09c] hover:bg-[#00b386] text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-green-100 dark:shadow-[0_0_20px_rgba(0,208,156,0.2)] transition-all flex items-center justify-center gap-2 hover:-translate-y-1 active:translate-y-0"
                              >
                                 Buy
                              </button>
                              <button 
-                                onClick={() => onTrade('SELL')}
+                                onClick={onTrade}
                                 className="w-full bg-white dark:bg-slate-900 border border-red-100 dark:border-red-900/30 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 py-4 rounded-xl font-bold text-lg transition-all hover:shadow-lg"
                              >
                                 Sell
@@ -153,13 +153,13 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ stock, onBack, onTrad
                 {/* Mobile Floating Action Bar */}
                 <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 p-4 flex gap-3 safe-area-pb z-20 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
                      <button 
-                        onClick={() => onTrade('SELL')}
+                        onClick={() => onTrade()}
                         className="flex-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-red-500 py-3.5 rounded-xl font-bold text-base active:bg-gray-50 active:scale-[0.98] transition-all"
                      >
                         Sell
                      </button>
                      <button 
-                        onClick={() => onTrade('BUY')}
+                        onClick={() => onTrade()}
                         className="flex-1 bg-[#00d09c] text-white py-3.5 rounded-xl font-bold text-base active:bg-[#00b386] active:scale-[0.98] transition-all shadow-lg shadow-green-100 dark:shadow-none"
                      >
                         Buy
